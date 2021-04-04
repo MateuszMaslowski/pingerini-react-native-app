@@ -12,6 +12,7 @@
   "dependencies": {
     "@types/styled-components": "^5.1.9",
     "@types/styled-components-react-native": "^5.1.1",
+    "expo": "^40.0.1",
     "react": "17.0.1",
     "react-native": "0.64.0",
     "react-native-draggable-flatlist": "^2.5.4",

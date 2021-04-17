@@ -10,8 +10,10 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@apollo/client": "^3.3.13",
     "@types/styled-components": "^5.1.9",
     "@types/styled-components-react-native": "^5.1.1",
+    "graphql": "^15.5.0",
     "react": "17.0.1",
     "react-native": "0.64.0",
     "react-native-draggable-flatlist": "^2.5.4",

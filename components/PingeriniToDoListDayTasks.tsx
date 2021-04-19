@@ -1,18 +1,20 @@
 import React, {FunctionComponent, useCallback, useState} from 'react';
 import {TouchableOpacity, View} from 'react-native';
-import {Icon, Text} from 'react-native-elements';
+import {Button, Icon, Text} from 'react-native-elements';
 import DraggableFlatList, {
     RenderItemParams,
 } from 'react-native-draggable-flatlist';
 
 type PingeriniToDoListProps = {
-    listKey: string;
+    date: Date;
 };
 
 export const PingeriniToDoListDayTasks: FunctionComponent<PingeriniToDoListProps> = _props => {
     const mainWrapperStyle = {
         marginTop: 15,
-        height: 700,
+        height: 550,
+        marginBottom: 0,
+        flex: 1,
     };
 
     const NUM_ITEMS = 10; //TODO: make it take data from back-end
@@ -66,10 +68,55 @@ export const PingeriniToDoListDayTasks: FunctionComponent<PingeriniToDoListProps
     );
     return (
         <View style={mainWrapperStyle}>
-            <Text h3>Today's tasks</Text>
+            <View
+                style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                }}>
+                <Text h3 style={{flex: 1}}>
+                    Today's tasks
+                </Text>
+                <Button
+                    style={{
+                        width: 30,
+                        padding: 0,
+                        margin: 0,
+                        justifyContent: 'space-evenly',
+                        marginVertical: 10,
+                    }}
+                    titleStyle={{
+                        fontSize: 10,
+                        padding: 0,
+                        fontWeight: 'bold',
+                        alignContent: 'center',
+                    }}
+                    buttonStyle={{
+                        padding: 3,
+                    }}
+                    title="<"
+                />
+                <Button
+                    style={{
+                        width: 30,
+                        padding: 0,
+                        margin: 0,
+                        justifyContent: 'space-evenly',
+                        marginVertical: 10,
+                    }}
+                    titleStyle={{
+                        fontSize: 10,
+                        padding: 0,
+                        fontWeight: 'bold',
+                        alignContent: 'center',
+                    }}
+                    buttonStyle={{
+                        padding: 3,
+                    }}
+                    title=">"
+                />
+            </View>
             <DraggableFlatList
                 listKey={_props.listKey}
-                scrollEnabled={false}
                 data={data}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => `draggable-item-${item.label}`}

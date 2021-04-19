@@ -25,7 +25,7 @@ export const PingeriniToDoList: FunctionComponent = _props => {
                 <FlatList
                     scrollEnabled={true}
                     data={['']}
-                    renderItem={() => (
+                    renderItem={({}) => (
                         <View
                             style={{
                                 paddingLeft: 100,

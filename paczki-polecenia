@@ -1,0 +1,9 @@
+Instalowane paczki (i dokładne polecenia)
+ 
+-------------------------------------
+npm i react-native-router-flux --save
+npm install react-native-screeen --save
+npm install --save @material-ui/cor
+npm install react-native-multistep-forms --save
+npm install react-native-multistep-forms
+-------------------------------------

@@ -1,14 +1,14 @@
 import React, {FunctionComponent} from 'react';
-import {TextInput as Input} from 'react-native-paper';
+import {TextInput} from 'react-native-paper';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
-// import {Button} from 'react-native-elements'
+import {Button} from 'react-native-elements';
 import {PingeriniRegistration} from './PingeriniRegistration';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 
 export const PingeriniLogin: FunctionComponent = _props => {
 
     const goToRegistration = () => {
-        Actions.registration(/*{hideNavBar:true}*/)
+        Actions.registration()
     }
 
     return (
@@ -20,28 +20,29 @@ export const PingeriniLogin: FunctionComponent = _props => {
                 <Text style={styles.subText}>
                     Get their work done
                 </Text>
+                <TextInput style={styles.input}
+                           theme={{colors: {primary: "#007ED5"}}}
+                           placeholder='Login'
+                           underlineColor="transparent"
+                           mode="outlined"
+                />
+                <TextInput style={styles.input}
+                           theme={{colors: {primary: "#007ED5"}}}
+                           placeholder='Password'
+                           underlineColor="transparent"
+                           mode="outlined"
+                           secureTextEntry={true}
+                />
             </View>
-            <Input style={styles.input}
-                   placeholder='Login'
-                   underlineColor="transparent"
-                   mode="outlined"
-            />
-            <Input style={styles.input}
-                   placeholder='Password'
-                   underlineColor="transparent"
-                   mode="outlined"
-                   secureTextEntry={true}
-            />
 
-            <TouchableOpacity
-                // style={styles.button}
-                // disabled={!this.state.isFormValid}
-                onPress = {goToRegistration}
-            >
-                <Text style={styles.buttonToRegistration}>
-                    Sign-up
-                </Text>
-            </TouchableOpacity>
+            {/*<View style={styles.input}>*/}
+                <Button title={"Login"} containerStyle={styles.buttonLogin}/>
+                <TouchableOpacity onPress={goToRegistration}>
+                    <Text style={styles.buttonToRegistration}>
+                        Sign-up
+                    </Text>
+                </TouchableOpacity>
+            {/*</View>*/}
 
         </View>
     );
@@ -49,28 +50,37 @@ export const PingeriniLogin: FunctionComponent = _props => {
 
 const styles = StyleSheet.create({
     topText: {
-        height: "50%"
+        height: 350
     },
     titleText: {
         textAlign: "center",
         fontSize: 30,
         // fontWeight: "bold"
-        marginTop: 80
+        marginTop: 60
     },
     subText: {
         textAlign: "center",
         fontSize: 25,
-        marginTop: 30
+        marginTop: 20,
+        marginBottom: 40
     },
     input: {
         width: "60%",
         marginLeft: "auto",
         marginRight: "auto",
-        marginBottom: 10
+        marginTop: 10
     },
     buttonToRegistration: {
-        color: "#000000FF",
+        color: "#007ED5",
         textAlign: "center",
-        fontSize: 17
+        fontSize: 15
+    },
+    buttonLogin: {
+        width: "60%",
+        marginLeft: "auto",
+        marginRight: "auto",
+        marginBottom: 10,
+        marginTop: 30,
+        backgroundColor: "#007ED5",
     }
 });

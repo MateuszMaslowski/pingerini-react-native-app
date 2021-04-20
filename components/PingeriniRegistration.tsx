@@ -1,59 +1,110 @@
-import React, {FunctionComponent} from 'react';
-import {TextInput as Input} from 'react-native-paper';
-import {View, StyleSheet, Text} from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import React, {Component} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import {Button} from 'react-native-elements';
+import {Name} from './Registration/Name'
+import {Birthdate} from './Registration/Birthdate'
+import {Job} from './Registration/Job'
+import {Company} from './Registration/Company'
+import {Email} from './Registration/Email'
+import {Login} from './Registration/Login'
+import {Password} from './Registration/Password'
+import {Picture} from './Registration/Picture'
+import {Terms} from './Registration/Terms'
+import {Finish} from './Registration/Finish'
 
-export const PingeriniRegistration: FunctionComponent = _props => {
+export class PingeriniRegistration extends Component {
+    state = {
+        step: 1
+    };
 
-    return (
-        <View>
-            <View style={styles.topText}>
-                <Text style={styles.titleText}>
-                    Tu będzie...
-                </Text>
-                <Text style={styles.subText}>
-                    pierwsza strona rejestracji
-                </Text>
-            </View>
-            <Input style={styles.input}
-                   placeholder='Login'
-                   underlineColor="transparent"
-                   mode="outlined"
-            />
-            <Input style={styles.input}
-                   placeholder='Password'
-                   underlineColor="transparent"
-                   mode="outlined"
-                   secureTextEntry={true}
-            />
-        </View>
-    );
+    // Proceed to next step
+    nextStep = () => {
+        const {step} = this.state;
+        this.setState({
+            step: step + 1
+        });
+    };
+
+    render() {
+        const {step} = this.state;
+
+        switch (step) {
+            case 1:
+                return (
+                    <View>
+                        <Name/>
+                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
+                    </View>
+                );
+            case 2:
+                return (
+                    <View>
+                        <Birthdate/>
+                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
+                    </View>
+                );
+            case 3:
+                return (
+                    <View>
+                        <Job/>
+                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
+                    </View>
+                );
+            case 4:
+                return (
+                    <View>
+                        <Company/>
+                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
+                    </View>
+                );
+            case 5:
+                return (
+                    <View>
+                        <Email/>
+                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
+                    </View>
+                );
+            case 6:
+                return (
+                    <View>
+                        <Login/>
+                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
+                    </View>
+                );
+            case 7:
+                return (
+                    <View>
+                        <Password/>
+                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
+                    </View>
+                );
+            case 8:
+                return (
+                    <View>
+                        <Terms/>
+                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
+                    </View>
+                );
+            case 9:
+                return (
+                    <View>
+                        <Finish />
+                        <Button title={"Go to my TODO list"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
+                    </View>
+                );
+        }
+    }
 }
 
 const styles = StyleSheet.create({
-    topText: {
-        height: "50%"
-    },
-    titleText: {
-        textAlign: "center",
-        fontSize: 30,
-        // fontWeight: "bold"
-        marginTop: 80
-    },
-    subText: {
-        textAlign: "center",
-        fontSize: 25,
-        marginTop: 30
-    },
-    input: {
+    buttonNext: {
         width: "60%",
         marginLeft: "auto",
         marginRight: "auto",
-        marginBottom: 10
-    },
-    buttonToRegistration: {
-        color: "#000000FF",
-        textAlign: "center",
-        fontSize: 17
+        marginBottom: 10,
+        marginTop: 30,
+        backgroundColor: "#007ED5",
     }
 });
+
+export default PingeriniRegistration;

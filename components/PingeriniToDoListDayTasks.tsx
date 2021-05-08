@@ -1,12 +1,20 @@
-import React, {FunctionComponent, useCallback, useState} from 'react';
+import React, {
+    FunctionComponent,
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
 import DraggableFlatList, {
     RenderItemParams,
 } from 'react-native-draggable-flatlist';
+import {BaseTask} from './PingeriniToDoList';
 
 type PingeriniToDoListProps = {
     date: Date;
+    tasks: BaseTask[];
+    onOpenTask: (id: number) => void;
 };
 
 export const PingeriniToDoListDayTasks: FunctionComponent<PingeriniToDoListProps> = _props => {
@@ -17,22 +25,14 @@ export const PingeriniToDoListDayTasks: FunctionComponent<PingeriniToDoListProps
         flex: 1,
     };
 
-    const NUM_ITEMS = 10; //TODO: make it take data from back-end
+    const [data, setData] = useState(_props.tasks);
 
-    const exampleData: Item[] = [...Array(20)].map((d, index) => {
-        return {
-            label: 'Task number ' + String(index),
-        };
-    });
-
-    type Item = {
-        label: string;
-    };
-
-    const [data, setData] = useState(exampleData);
+    useEffect(() => {
+        setData(_props.tasks);
+    }, [_props.tasks]);
 
     const renderItem = useCallback(
-        ({item, index, drag, isActive}: RenderItemParams<Item>) => {
+        ({item, _index, drag, isActive}: RenderItemParams<BaseTask>) => {
             return (
                 <TouchableOpacity
                     style={{
@@ -44,6 +44,7 @@ export const PingeriniToDoListDayTasks: FunctionComponent<PingeriniToDoListProps
                         borderBottomColor: 'silver',
                         borderBottomWidth: 1,
                     }}
+                    onPress={() => _props.onOpenTask(item.id)}
                     onLongPress={drag}>
                     <Text
                         style={{
@@ -51,7 +52,7 @@ export const PingeriniToDoListDayTasks: FunctionComponent<PingeriniToDoListProps
                             flex: 1,
                             flexDirection: 'row',
                         }}>
-                        {item.label}
+                        {`${item.name} (${item.id})`}
                     </Text>
                     <Icon
                         name={'check'}
@@ -116,10 +117,10 @@ export const PingeriniToDoListDayTasks: FunctionComponent<PingeriniToDoListProps
                 />
             </View>
             <DraggableFlatList
-                listKey={_props.listKey}
+                listKey={'id'}
                 data={data}
                 renderItem={renderItem}
-                keyExtractor={(item, index) => `draggable-item-${item.label}`}
+                keyExtractor={(item, _index) => `draggable-item-${item.id}`}
                 onDragEnd={({data}) => setData(data)}
             />
         </View>

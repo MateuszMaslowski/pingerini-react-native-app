@@ -8,7 +8,8 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {FunctionComponent, useState} from 'react';
+import {Text} from 'react-native';
 import {View} from 'react-native';
 import {ThemeProvider} from 'styled-components';
 import {LightTheme} from './style';
@@ -17,28 +18,26 @@ import SideMenu from 'react-native-side-menu-updated';
 import {PingeriniSideMenu} from './components/PingeriniSideMenu';
 import {PingeriniToDoList} from './components/PingeriniToDoList';
 import {PingeriniToDoPlusButton} from './components/PingeriniToDoPlusButton';
-import Routes from './components/Routes'
+import LoggedOutRoutes from './components/LoggedOutRoutes';
+import {ApolloProvider} from '@apollo/client';
+import {MainApolloClient} from './graphql/PingeriniApolloClient';
+import {gql} from '@apollo/client/core';
+import {BasicUser, UserContext} from './components/UserProvider';
+import LoggedInRoutes from './components/LoggedInRoutes';
 
 const App = () => {
-    const [menuOpen, setMenuOpen] = useState(false);
+    const [user, setUser] = useState<BasicUser | null>(null);
+
     return (
-        // <ThemeProvider theme={LightTheme}>
-        //     <SideMenu menu={<PingeriniSideMenu />} isOpen={menuOpen}>
-        //         <View
-        //             style={{
-        //                 // backgroundColor: 'magenta',
-        //                 display: 'flex',
-        //                 flex: 1,
-        //             }}>
-        //             <PingeriniHeader
-        //                 onToggleMenu={() => setMenuOpen(!menuOpen)}
-        //             />
-        //             <PingeriniToDoList />
-        //             <PingeriniToDoPlusButton />
-        //         </View>
-        //     </SideMenu>
-        // </ThemeProvider>
-        <Routes />
+        <ApolloProvider client={MainApolloClient}>
+            <ThemeProvider theme={LightTheme}>
+                {user ? (
+                    <LoggedInRoutes user={user} />
+                ) : (
+                    <LoggedOutRoutes onUserReady={setUser} />
+                )}
+            </ThemeProvider>
+        </ApolloProvider>
     );
 };
 

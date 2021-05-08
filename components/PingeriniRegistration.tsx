@@ -1,110 +1,179 @@
-import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {Button} from 'react-native-elements';
-import {Name} from './Registration/Name'
-import {Birthdate} from './Registration/Birthdate'
-import {Job} from './Registration/Job'
-import {Company} from './Registration/Company'
-import {Email} from './Registration/Email'
-import {Login} from './Registration/Login'
-import {Password} from './Registration/Password'
-import {Picture} from './Registration/Picture'
-import {Terms} from './Registration/Terms'
-import {Finish} from './Registration/Finish'
+import React, {FunctionComponent, useMemo, useState} from 'react';
+import {Alert, View} from 'react-native';
+import {Name} from './Registration/Name';
+import {Birthdate} from './Registration/Birthdate';
+import {Job} from './Registration/Job';
+import {Company} from './Registration/Company';
+import {Email} from './Registration/Email';
+import {Password} from './Registration/Password';
+import {Terms} from './Registration/Terms';
+import {Finish} from './Registration/Finish';
+import {NextButton} from './Registration/NextButton';
+import {gql} from '@apollo/client/core';
+import {useMutation} from '@apollo/client';
 
-export class PingeriniRegistration extends Component {
-    state = {
-        step: 1
-    };
-
-    // Proceed to next step
-    nextStep = () => {
-        const {step} = this.state;
-        this.setState({
-            step: step + 1
-        });
-    };
-
-    render() {
-        const {step} = this.state;
-
-        switch (step) {
-            case 1:
-                return (
-                    <View>
-                        <Name/>
-                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
-                    </View>
-                );
-            case 2:
-                return (
-                    <View>
-                        <Birthdate/>
-                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
-                    </View>
-                );
-            case 3:
-                return (
-                    <View>
-                        <Job/>
-                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
-                    </View>
-                );
-            case 4:
-                return (
-                    <View>
-                        <Company/>
-                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
-                    </View>
-                );
-            case 5:
-                return (
-                    <View>
-                        <Email/>
-                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
-                    </View>
-                );
-            case 6:
-                return (
-                    <View>
-                        <Login/>
-                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
-                    </View>
-                );
-            case 7:
-                return (
-                    <View>
-                        <Password/>
-                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
-                    </View>
-                );
-            case 8:
-                return (
-                    <View>
-                        <Terms/>
-                        <Button title={"Next"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
-                    </View>
-                );
-            case 9:
-                return (
-                    <View>
-                        <Finish />
-                        <Button title={"Go to my TODO list"} containerStyle={styles.buttonNext} onPress={this.nextStep}/>
-                    </View>
-                );
+const registration = gql`
+    mutation Registration(
+        $birthdate: Date!
+        $company: String!
+        $email: String!
+        $firstName: String!
+        $jobTitle: String!
+        $lastName: String!
+        $password: String!
+        $repeatedPassword: String!
+    ) {
+        registration(
+            lastName: $lastName
+            birthdate: $birthdate
+            company: $company
+            email: $email
+            firstName: $firstName
+            password: $password
+            repeatedPassword: $repeatedPassword
+            jobTitle: $jobTitle
+        ) {
+            errorInfo
+            ok
+            user {
+                id
+                firstName
+                lastName
+                sessionKey
+            }
         }
     }
-}
+`;
 
-const styles = StyleSheet.create({
-    buttonNext: {
-        width: "60%",
-        marginLeft: "auto",
-        marginRight: "auto",
-        marginBottom: 10,
-        marginTop: 30,
-        backgroundColor: "#007ED5",
-    }
-});
+type PingeriniRegistrationProps = {
+    onRegister: (user: any) => void;
+};
+
+export const PingeriniRegistration: FunctionComponent<PingeriniRegistrationProps> = props => {
+    const [step, setStep] = useState(1);
+    const [password, setPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [birth, setBirth] = useState(new Date());
+    const [job, setJob] = useState('');
+    const [company, setCompany] = useState('');
+    const [email, setEmail] = useState('');
+
+    const [vRegister, {}] = useMutation(registration);
+
+    // Proceed to next step
+    const nextStep = () => {
+        setStep(step + 1);
+    };
+
+    const tryFinalize = () => {
+        vRegister({
+            variables: {
+                password,
+                firstName,
+                lastName,
+                birthdate: birth.toISOString().slice(0, 10),
+                jobTitle: job,
+                company,
+                email,
+                repeatedPassword: password,
+            },
+        })
+            .then(res => {
+                if (res.data.registration.ok) {
+                    console.log(res.data);
+                    props.onRegister(res.data.registration.user);
+                } else {
+                    console.log(res.data.registration.errorInfo);
+                    Alert.alert(
+                        'Register error',
+                        JSON.stringify(res.data.registration.errorInfo),
+                        [{onPress: () => setStep(1)}],
+                    );
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                Alert.alert('Register error', JSON.stringify(err), [
+                    {onPress: () => setStep(1)},
+                ]);
+            });
+    };
+
+    return (
+        <View>
+            {step === 1 ? (
+                <View>
+                    <Name
+                        onGatherName={(fname, lname) => {
+                            setFirstName(fname);
+                            setLastName(lname);
+                            nextStep();
+                        }}
+                    />
+                </View>
+            ) : step === 2 ? (
+                <View>
+                    <Birthdate
+                        onGatherBirth={v => {
+                            setBirth(v);
+                            nextStep();
+                        }}
+                    />
+                </View>
+            ) : step === 3 ? (
+                <View>
+                    <Job
+                        onGatherJob={job => {
+                            setJob(job);
+                            nextStep();
+                        }}
+                    />
+                </View>
+            ) : step === 4 ? (
+                <View>
+                    <Company
+                        onGatherCompany={company => {
+                            setCompany(company);
+                            nextStep();
+                        }}
+                    />
+                </View>
+            ) : step === 5 ? (
+                <View>
+                    <Email
+                        onGatherMail={mail => {
+                            setEmail(mail);
+                            nextStep();
+                        }}
+                    />
+                </View>
+            ) : step === 6 ? (
+                <View>
+                    <Password
+                        onGatherPassword={p => {
+                            setPassword(p);
+                            nextStep();
+                        }}
+                    />
+                </View>
+            ) : step === 7 ? (
+                <View>
+                    <Terms onAcceptTerms={tryFinalize} />
+                </View>
+            ) : step === 8 ? (
+                <View>
+                    <Finish />
+                    <NextButton
+                        title={'Go to my TODO list'}
+                        onPress={nextStep}
+                    />
+                </View>
+            ) : (
+                <></>
+            )}
+        </View>
+    );
+};
 
 export default PingeriniRegistration;

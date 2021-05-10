@@ -24,6 +24,7 @@ import {MainApolloClient} from './graphql/PingeriniApolloClient';
 import {gql} from '@apollo/client/core';
 import {BasicUser, UserContext} from './components/UserProvider';
 import LoggedInRoutes from './components/LoggedInRoutes';
+import Routes from './components/Routes';
 
 const App = () => {
     const [user, setUser] = useState<BasicUser | null>(null);

@@ -16,6 +16,8 @@ const loginMutation = gql`
                 firstName
                 lastName
                 sessionKey
+                jobTitle
+                company
             }
         }
     }

@@ -5,6 +5,8 @@ export type BasicUser = {
     lastName: string;
     sessionKey: string;
     firstName: string;
+    jobTitle: string;
+    company: string;
 };
 
 export const UserContext = createContext<BasicUser>(

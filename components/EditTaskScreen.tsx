@@ -1,12 +1,12 @@
 import React, {FunctionComponent, useContext, useEffect, useState} from 'react';
 import {Text, TextInput, View, Button, Alert} from 'react-native';
-import SideMenu from 'react-native-side-menu-updated';
 import {gql} from '@apollo/client/core';
 import {useMutation, useQuery} from '@apollo/client';
 import {UserContext} from './UserProvider';
 import {BaseTask, queryMyTasks} from './PingeriniToDoList';
 import styled from 'styled-components/native';
 import {removeDuplicateTasks} from '../Utils';
+import {Actions} from 'react-native-router-flux';
 
 type EditTaskScreenProps = {
     taskId: number;
@@ -60,7 +60,7 @@ export const EditTaskScreen: FunctionComponent<EditTaskScreenProps> = props => {
 
     useEffect(() => {
         const tasks = removeDuplicateTasks(tasksQuery.data?.userTasks ?? []);
-        setTask(tasks.filter(t => t.id === props.taskId)[0]);
+        setTask(tasks.filter((t: any) => t.id === props.taskId)[0]);
     }, [tasksQuery, tasksQuery.data]);
 
     const [mEditTask, {}] = useMutation(mutationEditTask);
@@ -98,6 +98,7 @@ export const EditTaskScreen: FunctionComponent<EditTaskScreenProps> = props => {
         })
             .then(res => {
                 if (res.data.updateTask.ok) {
+                    Actions.pop();
                 } else {
                     Alert.alert(res.data.updateTask.errorInfo);
                 }
@@ -106,6 +107,10 @@ export const EditTaskScreen: FunctionComponent<EditTaskScreenProps> = props => {
                 console.log(JSON.stringify(err));
                 Alert.alert(JSON.stringify(err));
             });
+    };
+
+    const quit = () => {
+        Actions.pop();
     };
 
     return (
@@ -133,6 +138,7 @@ export const EditTaskScreen: FunctionComponent<EditTaskScreenProps> = props => {
                 onChangeText={setDescription}
             />
             <Button title={'Save changes'} onPress={trySave} />
+            <Button color={'red'} title={'Discard changes'} onPress={quit} />
         </View>
     );
 };

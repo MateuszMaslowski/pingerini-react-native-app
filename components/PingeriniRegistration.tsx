@@ -40,6 +40,8 @@ const registration = gql`
                 firstName
                 lastName
                 sessionKey
+                jobTitle
+                company
             }
         }
     }
@@ -67,17 +69,21 @@ export const PingeriniRegistration: FunctionComponent<PingeriniRegistrationProps
     };
 
     const tryFinalize = () => {
+        const args = {
+            password,
+            firstName,
+            lastName,
+            birthdate: birth.toISOString().slice(0, 10),
+            jobTitle: job,
+            company,
+            email,
+            repeatedPassword: password,
+        };
+
+        console.log(args);
+
         vRegister({
-            variables: {
-                password,
-                firstName,
-                lastName,
-                birthdate: birth.toISOString().slice(0, 10),
-                jobTitle: job,
-                company,
-                email,
-                repeatedPassword: password,
-            },
+            variables: args,
         })
             .then(res => {
                 if (res.data.registration.ok) {

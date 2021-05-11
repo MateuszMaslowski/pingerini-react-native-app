@@ -33,7 +33,10 @@ const App = () => {
         <ApolloProvider client={MainApolloClient}>
             <ThemeProvider theme={LightTheme}>
                 {user ? (
-                    <LoggedInRoutes user={user} />
+                    <LoggedInRoutes
+                        user={user}
+                        onLogout={() => setUser(null)}
+                    />
                 ) : (
                     <LoggedOutRoutes onUserReady={setUser} />
                 )}

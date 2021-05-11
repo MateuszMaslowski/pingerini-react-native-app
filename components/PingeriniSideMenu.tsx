@@ -1,14 +1,21 @@
-import React, {FunctionComponent} from 'react';
-import {SafeAreaView, View} from 'react-native';
+import React, {FunctionComponent, useContext} from 'react';
+import {Button, SafeAreaView, View} from 'react-native';
 
 import {ListItem, Avatar, Icon} from 'react-native-elements';
+import {BasicUser, UserContext} from './UserProvider';
 
-export const PingeriniSideMenu: FunctionComponent = _props => {
+type SideMenuProps = {
+    onLogout: () => void;
+};
+
+export const PingeriniSideMenu: FunctionComponent<SideMenuProps> = _props => {
+    const myUser = useContext<BasicUser>(UserContext);
+
     const user = {
-        name: 'Jan Pawel II',
+        name: `${myUser.firstName} ${myUser.lastName}`,
         avatar_url:
             'https://static.wikia.nocookie.net/nowa-przyszlosc/images/0/0f/Jan_Paweł.jpg/revision/latest/scale-to-width-down/620?cb=20190924132209&path-prefix=pl', //'https://i.vimeocdn.com/portrait/58832_300x300.jpg',
-        subtitle: 'Papiez w Polak',
+        subtitle: `${myUser.jobTitle} at ${myUser.company}`,
     };
 
     const list = [
@@ -36,6 +43,7 @@ export const PingeriniSideMenu: FunctionComponent = _props => {
                     <ListItem.Chevron />
                 </ListItem>
             ))}
+            <Button title={'Logout'} onPress={_props.onLogout} />
         </SafeAreaView>
     );
 };

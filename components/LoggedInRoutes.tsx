@@ -14,6 +14,7 @@ import {EditTaskScreen} from './EditTaskScreen';
 
 type LoggedInProps = {
     user: BasicUser;
+    onLogout: () => void;
 };
 
 const LoggedInApp: FunctionComponent<LoggedInProps> = props => {
@@ -21,7 +22,9 @@ const LoggedInApp: FunctionComponent<LoggedInProps> = props => {
 
     return (
         <UserContext.Provider value={props.user}>
-            <SideMenu menu={<PingeriniSideMenu />} isOpen={menuOpen}>
+            <SideMenu
+                menu={<PingeriniSideMenu onLogout={props.onLogout} />}
+                isOpen={menuOpen}>
                 <View
                     style={{
                         display: 'flex',

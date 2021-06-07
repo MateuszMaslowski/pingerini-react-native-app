@@ -2,7 +2,7 @@ import React, {FunctionComponent, useContext, useEffect, useState} from 'react';
 import {Text, TextInput, View, Button, Alert} from 'react-native';
 import {gql} from '@apollo/client/core';
 import {useMutation, useQuery} from '@apollo/client';
-import {UserContext} from './UserProvider';
+import {BasicUser, UserContext} from './UserProvider';
 import {BaseTask, queryMyTasks} from './PingeriniToDoList';
 import styled from 'styled-components/native';
 import {removeDuplicateTasks} from '../Utils';
@@ -10,6 +10,7 @@ import {Actions} from 'react-native-router-flux';
 
 type EditTaskScreenProps = {
     taskId: number;
+    userId: string;
 };
 
 const StyledTextInput = styled(TextInput)`
@@ -49,17 +50,45 @@ const mutationEditTask = gql`
     }
 `;
 
+export const queryUsers = gql`
+    query Users($sessionKey: String!) {
+        users(sessionKey: $sessionKey) {
+            id
+            firstName
+            lastName
+        }
+    }
+`;
+
 export const EditTaskScreen: FunctionComponent<EditTaskScreenProps> = props => {
     // eslint-disable-next-line react/jsx-no-undef
 
     const user = useContext(UserContext);
     const [task, setTask] = useState((null as unknown) as BaseTask);
     const tasksQuery = useQuery(queryMyTasks, {
-        variables: {sessionKey: user.sessionKey},
+        variables: {
+            sessionKey: user.sessionKey,
+            userId: props.userId ?? user.id,
+        },
+    });
+    const usersQuery = useQuery(queryUsers, {
+        variables: {
+            sessionKey: user.sessionKey,
+        },
     });
 
+    const [otherUser, setOtherUser] = useState((null as unknown) as BasicUser);
+
     useEffect(() => {
-        const tasks = removeDuplicateTasks(tasksQuery.data?.userTasks ?? []);
+        setOtherUser(
+            usersQuery?.data?.users?.filter(u => u.id == props.userId)[0],
+        );
+    }, [usersQuery]);
+
+    useEffect(() => {
+        const tasks = removeDuplicateTasks(
+            tasksQuery.data?.commonUserTasks ?? [],
+        );
         setTask(tasks.filter((t: any) => t.id === props.taskId)[0]);
     }, [tasksQuery, tasksQuery.data]);
 
@@ -84,6 +113,18 @@ export const EditTaskScreen: FunctionComponent<EditTaskScreenProps> = props => {
     }, [task]);
 
     const trySave = () => {
+        console.log({
+            variables: {
+                deadline,
+                description,
+                executionDate,
+                fruits,
+                name,
+                sessionKey: user.sessionKey,
+                state,
+                taskId: props.taskId,
+            },
+        });
         mEditTask({
             variables: {
                 deadline,
@@ -97,6 +138,7 @@ export const EditTaskScreen: FunctionComponent<EditTaskScreenProps> = props => {
             },
         })
             .then(res => {
+                console.log(res);
                 if (res.data.updateTask.ok) {
                     Actions.pop();
                 } else {
@@ -139,6 +181,28 @@ export const EditTaskScreen: FunctionComponent<EditTaskScreenProps> = props => {
             />
             <Button title={'Save changes'} onPress={trySave} />
             <Button color={'red'} title={'Discard changes'} onPress={quit} />
+            {props?.userId == user?.id ? (
+                <></>
+            ) : (
+                <Button
+                    title={`${
+                        props?.userId == user?.id
+                            ? 'Request delay'
+                            : 'Request progress'
+                    } from ${otherUser?.firstName} ${otherUser?.lastName}`}
+                    onPress={() =>
+                        Actions.push('createPing', {
+                            otherId: props?.userId,
+                            taskId: props.taskId,
+                            pingType:
+                                props?.userId == user?.id
+                                    ? 'Delay request'
+                                    : 'Progress request',
+                            isResponse: false,
+                        })
+                    }
+                />
+            )}
         </View>
     );
 };

@@ -3,6 +3,7 @@ import {Button, SafeAreaView, View} from 'react-native';
 
 import {ListItem, Avatar, Icon} from 'react-native-elements';
 import {BasicUser, UserContext} from './UserProvider';
+import {Actions} from 'react-native-router-flux';
 
 type SideMenuProps = {
     onLogout: () => void;
@@ -43,7 +44,15 @@ export const PingeriniSideMenu: FunctionComponent<SideMenuProps> = _props => {
                     <ListItem.Chevron />
                 </ListItem>
             ))}
-            <Button title={'Logout'} onPress={_props.onLogout} />
+            <ListItem key={'pingList'} bottomDivider>
+                <Button
+                    title={'My pings'}
+                    onPress={() => Actions.push('pingList')}
+                />
+            </ListItem>
+            <ListItem key={'xd'} bottomDivider>
+                <Button title={'Logout'} onPress={_props.onLogout} />
+            </ListItem>
         </SafeAreaView>
     );
 };

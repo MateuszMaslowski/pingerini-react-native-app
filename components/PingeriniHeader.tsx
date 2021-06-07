@@ -3,6 +3,7 @@ import {Header} from 'react-native-elements';
 
 type ToggleMenuProps = {
     onToggleMenu: () => void;
+    onSearch: () => void;
 };
 
 export const PingeriniHeader: FunctionComponent<ToggleMenuProps> = props => {
@@ -20,6 +21,7 @@ export const PingeriniHeader: FunctionComponent<ToggleMenuProps> = props => {
             rightComponent={{
                 icon: 'search',
                 color: '#fff',
+                onPress: props.onSearch,
             }}
         />
     );

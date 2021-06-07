@@ -7,17 +7,19 @@ import {Alert} from 'react-native';
 
 type PingeriniToDoPlusButtonProps = {
     onTaskAdded: (taskId: number) => void;
+    addForId: string;
+    addDate: string;
 };
 const mutationTryAddTask = gql`
-    mutation AddTask($sessionKey: String!, $myId: Int!) {
+    mutation AddTask($sessionKey: String!, $date: Date!, $users: [Int!]!) {
         addTask(
             sessionKey: $sessionKey
-            deadline: "2022-01-02"
+            deadline: $date
             description: "New description"
-            executionDate: "2022-01-02"
+            executionDate: $date
             name: "New task"
             fruits: "New fruits"
-            usersId: [$myId]
+            usersId: $users
         ) {
             ok
             errorInfo
@@ -41,11 +43,12 @@ export const PingeriniToDoPlusButton: FunctionComponent<PingeriniToDoPlusButtonP
     const [mTryAddTask, {}] = useMutation(mutationTryAddTask);
 
     const tryAddTask = () => {
-        console.log('TryAdd task');
+        console.log(`TryAdd task ${_props.addDate}`);
         mTryAddTask({
             variables: {
                 sessionKey: user.sessionKey,
-                myId: user.id,
+                users: user?.id === _props.addForId ? [] : [_props.addForId],
+                date: _props.addDate,
             },
         })
             .then(res => {
@@ -57,6 +60,7 @@ export const PingeriniToDoPlusButton: FunctionComponent<PingeriniToDoPlusButtonP
             })
             .catch(err => {
                 Alert.alert(JSON.stringify(err));
+                console.log(JSON.stringify(err));
             });
     };
 

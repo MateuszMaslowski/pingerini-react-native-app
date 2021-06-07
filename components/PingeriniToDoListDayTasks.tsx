@@ -12,9 +12,13 @@ import DraggableFlatList, {
 import {BaseTask} from './PingeriniToDoList';
 
 type PingeriniToDoListProps = {
-    date: Date;
+    date: string | undefined;
+    isToday: boolean;
     tasks: BaseTask[];
     onOpenTask: (id: number) => void;
+    onNext: () => void;
+    onPrev: () => void;
+    onAll: () => void;
 };
 
 export const PingeriniToDoListDayTasks: FunctionComponent<PingeriniToDoListProps> = _props => {
@@ -75,7 +79,13 @@ export const PingeriniToDoListDayTasks: FunctionComponent<PingeriniToDoListProps
                     flexDirection: 'row',
                 }}>
                 <Text h3 style={{flex: 1}}>
-                    Today's tasks
+                    {`${
+                        _props.date
+                            ? _props.isToday
+                                ? "Today's"
+                                : _props.date
+                            : 'All'
+                    } tasks`}
                 </Text>
                 <Button
                     style={{
@@ -94,7 +104,8 @@ export const PingeriniToDoListDayTasks: FunctionComponent<PingeriniToDoListProps
                     buttonStyle={{
                         padding: 3,
                     }}
-                    title="<"
+                    title="    <    "
+                    onPress={_props.onPrev}
                 />
                 <Button
                     style={{
@@ -113,12 +124,37 @@ export const PingeriniToDoListDayTasks: FunctionComponent<PingeriniToDoListProps
                     buttonStyle={{
                         padding: 3,
                     }}
-                    title=">"
+                    title="Show All"
+                    onPress={_props.onAll}
+                />
+                <Button
+                    style={{
+                        width: 30,
+                        padding: 0,
+                        margin: 0,
+                        justifyContent: 'space-evenly',
+                        marginVertical: 10,
+                    }}
+                    titleStyle={{
+                        fontSize: 10,
+                        padding: 0,
+                        fontWeight: 'bold',
+                        alignContent: 'center',
+                    }}
+                    buttonStyle={{
+                        padding: 3,
+                    }}
+                    title="    >    "
+                    onPress={_props.onNext}
                 />
             </View>
             <DraggableFlatList
                 listKey={'id'}
-                data={data}
+                data={
+                    _props.date
+                        ? data.filter(d => d.executionDate === _props.date)
+                        : data
+                }
                 renderItem={renderItem}
                 keyExtractor={(item, _index) => `draggable-item-${item.id}`}
                 onDragEnd={({data}) => setData(data)}

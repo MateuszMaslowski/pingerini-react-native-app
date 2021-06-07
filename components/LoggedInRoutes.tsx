@@ -6,11 +6,15 @@ import {View} from 'react-native';
 import {PingeriniHeader} from './PingeriniHeader';
 import {PingeriniToDoList} from './PingeriniToDoList';
 import {PingeriniToDoPlusButton} from './PingeriniToDoPlusButton';
-import {Router, Scene, Stack} from 'react-native-router-flux';
+import {Actions, Router, Scene, Stack} from 'react-native-router-flux';
 import {PingeriniLogin} from './PingeriniLogin';
 import {PingeriniRegistration} from './PingeriniRegistration';
 import {PingeriniTasksScreen} from './PingeriniTasksScreen';
 import {EditTaskScreen} from './EditTaskScreen';
+import SearchScreen from './SearchScreen';
+import PingCreatorScreen from './PingCreatorScreen';
+import PingListScreen from './PingListScreen';
+import PingDetailsScreen from './PingDetailsScreen';
 
 type LoggedInProps = {
     user: BasicUser;
@@ -32,6 +36,7 @@ const LoggedInApp: FunctionComponent<LoggedInProps> = props => {
                     }}>
                     <PingeriniHeader
                         onToggleMenu={() => setMenuOpen(!menuOpen)}
+                        onSearch={() => Actions.push('search', {})}
                     />
                     <Router>
                         <Stack key="root">
@@ -40,6 +45,30 @@ const LoggedInApp: FunctionComponent<LoggedInProps> = props => {
                                 component={PingeriniTasksScreen}
                                 title="Main Screen"
                                 initial={true}
+                                hideNavBar={true}
+                            />
+                            <Scene
+                                key="search"
+                                component={SearchScreen}
+                                title="Search Screen"
+                                hideNavBar={true}
+                            />
+                            <Scene
+                                key="createPing"
+                                component={PingCreatorScreen}
+                                title="Ping Creator Screen"
+                                hideNavBar={true}
+                            />
+                            <Scene
+                                key="pingList"
+                                component={PingListScreen}
+                                title="Ping List Screen"
+                                hideNavBar={true}
+                            />
+                            <Scene
+                                key="pingDetails"
+                                component={PingDetailsScreen}
+                                title="Ping Details Screen"
                                 hideNavBar={true}
                             />
                             <Scene
